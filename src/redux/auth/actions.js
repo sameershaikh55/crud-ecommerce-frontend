@@ -4,6 +4,8 @@ import privateUrls from "../../utils/privateUrls";
 
 // LOGIN
 export const login = (data, hideModal) => {
+  toaster("loading", "loading...");
+
   return async (dispatch) => {
     try {
       const res = await fetch("/api/login", {
@@ -32,6 +34,8 @@ export const login = (data, hideModal) => {
 
 // SIGNUP
 export const signup = (data, hideModal) => {
+  toaster("loading", "loading...");
+
   return async (dispatch) => {
     try {
       const res = await fetch("/api/register", {

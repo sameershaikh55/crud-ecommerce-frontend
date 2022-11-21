@@ -8,7 +8,7 @@ import MainLayout from "../../layouts/MainLayout";
 import { profileApi, updateProfilePicture } from "../../redux/profile/actions";
 import UserInfoJumbotron from "./UserInfo/UserInfoJumbotron";
 import Modal from "../../Modals/AuthModal";
-import { userProductsApi } from "../../redux/product/actions";
+import { deleteProductApi, userProductsApi } from "../../redux/product/actions";
 
 const Profile = ({
   profile,
@@ -16,9 +16,11 @@ const Profile = ({
   updateProfilePicture,
   userProducts,
   userProductsApi,
+  deleteProductApi,
 }) => {
   const [activeProduct, setActiveProduct] = useState(null);
   const [isModalActive, setIsModalActive] = useState(false);
+  const [productToEdit, setProductToEdit] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,12 +40,14 @@ const Profile = ({
           setIsModalActive(false);
         }}
         productFormModal
+        productToEdit={productToEdit}
       />
 
       <UserInfoJumbotron
         userData={profile}
         updateProfilePicture={updateProfilePicture}
         setIsModalActive={setIsModalActive}
+        setProductToEdit={setProductToEdit}
       />
 
       {(userProducts === "" ? (
@@ -98,15 +102,35 @@ const Profile = ({
                     </div> */}
                   </div>
 
-                  {/* <div className="btns mt-5">
-                    <button className="btn btn-grey">Drop Ended</button>
-                    <button
-                      style={{ marginTop: 18 }}
-                      className="btn btn-light-grey"
-                    >
-                      View Editons
-                    </button>
-                  </div> */}
+                  <div className="btns row mt-5">
+                    <div className="col-6">
+                      <button
+                        onClick={() => {
+                          setProductToEdit(
+                            (activeProduct === null && userProducts[0]) ||
+                              activeProduct
+                          );
+                          setIsModalActive(true);
+                        }}
+                        className="btn w-100 btn-grey"
+                      >
+                        Update
+                      </button>
+                    </div>
+                    <div className="col-6">
+                      <button
+                        onClick={() =>
+                          deleteProductApi(
+                            (activeProduct !== null && activeProduct._id) ||
+                              userProducts[0]._id
+                          )
+                        }
+                        className="btn w-100 btn-light-grey"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </GridContainer>
@@ -118,6 +142,10 @@ const Profile = ({
                 const { _id, picture, name } = el;
 
                 if (activeProduct && activeProduct.name === name) {
+                  return;
+                }
+
+                if (!activeProduct && userProducts[0].name === name) {
                   return;
                 }
 
@@ -157,6 +185,9 @@ const mapDispatchtoProps = (dispatch) => {
     },
     userProductsApi: function () {
       dispatch(userProductsApi());
+    },
+    deleteProductApi: function (id) {
+      dispatch(deleteProductApi(id));
     },
   };
 };

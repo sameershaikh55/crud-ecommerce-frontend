@@ -1,20 +1,48 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { connect } from "react-redux";
-import { addProductApi } from "../redux/product/actions";
+import { addProductApi, updateProductApi } from "../redux/product/actions";
 import FileBase64 from "react-file-base64";
 
-const ProductForm = ({ hideModal, addProductApi }) => {
+const ProductForm = ({
+  hideModal,
+  addProductApi,
+  productToEdit,
+  updateProductApi,
+}) => {
   const [productImage, setProductImage] = useState(null);
 
   const {
     register,
     formState: { errors },
     handleSubmit,
+    reset,
   } = useForm();
 
+  useEffect(() => {
+    if (productToEdit !== null) {
+      reset({
+        name: productToEdit.name,
+        description: productToEdit.description,
+        price: productToEdit.price,
+        stock: productToEdit.stock,
+      });
+    }
+  }, [productToEdit]);
+
   const onSubmit = async (data) => {
-    addProductApi({ ...data, picture: productImage }, hideModal);
+    if (productToEdit) {
+      updateProductApi(
+        productToEdit._id,
+        productImage !== null
+          ? { ...data, picture: productImage }
+          : { ...data },
+        hideModal,
+        reset
+      );
+    } else {
+      addProductApi({ ...data, picture: productImage }, hideModal, reset);
+    }
   };
 
   return (
@@ -62,7 +90,7 @@ const ProductForm = ({ hideModal, addProductApi }) => {
         />
       </div>
       <button type="submit" className="btn btn-grey mt-4">
-        Add Product
+        {(productToEdit !== null && "Update") || "Add"} Product
       </button>
     </form>
   );
@@ -70,8 +98,11 @@ const ProductForm = ({ hideModal, addProductApi }) => {
 
 const mapDispatchtoProps = (dispatch) => {
   return {
-    addProductApi: function (data, hideModal) {
-      dispatch(addProductApi(data, hideModal));
+    addProductApi: function (data, hideModal, reset) {
+      dispatch(addProductApi(data, hideModal, reset));
+    },
+    updateProductApi: function (id, data, hideModal, reset) {
+      dispatch(updateProductApi(id, data, hideModal, reset));
     },
   };
 };

@@ -6,7 +6,12 @@ import Signup from "../components/Signup";
 import Signin from "../components/Signin";
 import ProductForm from "../components/ProductForm";
 
-const Modal = ({ isModalActive, hideModal, productFormModal }) => {
+const Modal = ({
+  isModalActive,
+  hideModal,
+  productFormModal,
+  productToEdit,
+}) => {
   const [isSignup, setIsSignup] = useState(false);
 
   const toggleForm = () => {
@@ -27,7 +32,9 @@ const Modal = ({ isModalActive, hideModal, productFormModal }) => {
         <div className="right">
           <div className="main">
             {productFormModal ? (
-              <h3>Add Product</h3>
+              (productToEdit !== null && <h3>Update Product</h3>) || (
+                <h3>Add Product</h3>
+              )
             ) : (
               <h3>Sign {isSignup ? "Up" : "In"} Now</h3>
             )}
@@ -39,7 +46,11 @@ const Modal = ({ isModalActive, hideModal, productFormModal }) => {
 
             <GridContainer rowClassName="gy-4 mt-2">
               {productFormModal ? (
-                <ProductForm toggleForm={toggleForm} hideModal={hideModal} />
+                <ProductForm
+                  toggleForm={toggleForm}
+                  hideModal={hideModal}
+                  productToEdit={productToEdit}
+                />
               ) : isSignup ? (
                 <Signup toggleForm={toggleForm} hideModal={hideModal} />
               ) : (

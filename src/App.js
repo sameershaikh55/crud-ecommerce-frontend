@@ -27,7 +27,7 @@ function App({ profileApi }) {
     <>
       <ToastContainer
         position="bottom-center"
-        autoClose={5000}
+        autoClose={2000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
@@ -35,7 +35,8 @@ function App({ profileApi }) {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="colored"
+        theme="light"
+        // limit={1}
       />
 
       <Routes>

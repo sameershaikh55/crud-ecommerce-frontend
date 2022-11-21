@@ -60,28 +60,86 @@ export const userProductsApi = () => {
 };
 
 // ADD PRODUCT
-export const addProductApi = async (data, hideModal) => {
-  try {
-    const res = await fetch("/api/product/new", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(data),
-    });
-    const resData = await res.json();
-
-    if (resData.success === false) {
-      toaster("error", resData.message);
-    } else {
-      toaster("success", "Product Added!");
-      allProductsApi();
-      userProductsApi();
-      hideModal();
+export const addProductApi = (data, hideModal, reset) => {
+  toaster("loading", "loading...");
+  return async (dispatch) => {
+    try {
+      const res = await fetch("/api/product/new", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(data),
+      });
+      const resData = await res.json();
+      if (resData.success === false) {
+        toaster("error", resData.message);
+      } else {
+        toaster("success", resData.data.message);
+        dispatch(userProductsFunc(resData.data.products));
+        hideModal();
+        reset();
+      }
+    } catch (error) {
+      toaster("error", error);
     }
-  } catch (error) {
-    toaster("error", error);
-  }
+  };
+};
+
+// Update PRODUCT
+export const updateProductApi = (id, data, hideModal, reset) => {
+  toaster("loading", "loading...");
+  return async (dispatch) => {
+    try {
+      const res = await fetch(`/api/product/${id}`, {
+        method: "PATCH",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(data),
+      });
+      const resData = await res.json();
+      if (resData.success === false) {
+        toaster("error", resData.message);
+      } else {
+        toaster("success", resData.data.message);
+        dispatch(userProductsFunc(resData.data.products));
+        hideModal();
+        reset();
+      }
+    } catch (error) {
+      toaster("error", error);
+    }
+  };
+};
+
+// DELETE PRODUCT
+export const deleteProductApi = (id) => {
+  toaster("loading", "loading...");
+  return async (dispatch) => {
+    try {
+      const res = await fetch(`/api/product/${id}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+      const resData = await res.json();
+
+      if (resData.success === false) {
+        toaster("error", resData.message);
+      } else {
+        toaster("success", resData.data.message);
+        dispatch(userProductsFunc(resData.data.products));
+      }
+    } catch (error) {
+      toaster("error", error);
+    }
+  };
 };

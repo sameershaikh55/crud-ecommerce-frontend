@@ -6,6 +6,7 @@ const UserInfoJumbotron = ({
   userData,
   updateProfilePicture,
   setIsModalActive,
+  setProductToEdit,
 }) => {
   const { fname, lname, email, phone, picture } = userData;
 
@@ -31,7 +32,10 @@ const UserInfoJumbotron = ({
           @{fname}_{lname}
         </div>
         <button
-          onClick={() => setIsModalActive(true)}
+          onClick={() => {
+            setIsModalActive(true);
+            setProductToEdit(null);
+          }}
           className="btn btn-primary-inverted"
         >
           Add Product
